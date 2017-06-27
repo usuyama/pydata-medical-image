@@ -28,11 +28,13 @@ def load_annotations(csv_file):
             if case in f:
                 return(f)
 
-    df_node = pd.read_csv(luna_path + "annotations.csv")
+    df_node = pd.read_csv(csv_file)
     df_node["file"] = df_node["seriesuid"].apply(get_filename)
     df_node = df_node.dropna()
 
     return df_node
+
+df_node = load_annotations(luna_path + "annotations.csv")
 
 def get_seriesuid(filepath):
     basename = os.path.basename(filepath)
@@ -138,15 +140,18 @@ def get_feature_label_pairs(npz_file, count=2, cube_size=48, random_center=True,
 
     return features_list, labels_list
 
-def add_conv_block(model, filter, kernel=(3, 3, 3), input_shape=None):
-    model.add(Conv3D(filter, kernel, activation='linear', padding='valid', strides=(1, 1, 1), input_shape=input_shape))
-    model.add(PReLU(shared_axes=[1,2,3]))
+def add_conv_block(model, filter, kernel=(3, 3, 3)):
+    model.add(Conv3D(filter, kernel, activation='linear', padding='valid', strides=(1, 1, 1)))
+    model.add(PReLU(shared_axes=[1, 2, 3]))
     model.add(BatchNormalization()) 
 
 def get_model(input_dim=48):
     model = Sequential()
     # 1st layer group
-    add_conv_block(model, 64, input_shape=(input_dim, input_dim, input_dim, 1))
+    model.add(Conv3D(64, (3, 3, 3), activation='linear', padding='valid', strides=(1, 1, 1), input_shape=(input_dim, input_dim, input_dim, 1)))
+    model.add(PReLU(shared_axes=[1, 2, 3]))
+    model.add(BatchNormalization()) 
+
     add_conv_block(model, 64)
     model.add(MaxPooling3D(pool_size=(2, 2, 2), padding='valid'))
 
@@ -158,15 +163,13 @@ def get_model(input_dim=48):
     # 3rd layer group
     add_conv_block(model, 256)
     add_conv_block(model, 256)
-    model.add(MaxPooling3D(pool_size=(2, 2, 2), padding='valid'))
 
     # 4th layer group
     add_conv_block(model, 512)
     add_conv_block(model, 512)
-    model.add(MaxPooling3D(pool_size=(2, 2, 2), padding='valid'))
 
     model.add(Flatten())
-    
+
     # FC layers group
     model.add(Dense(512, activation='linear'))
     model.add(PReLU(shared_axes=[1]))
@@ -196,8 +199,8 @@ class DataSequence(Sequence):
 
         fl, ll = get_feature_label_pairs(npz_file, count=self.batch_size, cube_size=self.cube_size, random_center=True)
 
-        #import collections
-        #print(idx, collections.Counter(ll), nl)
+        # import collections
+        # print(idx, collections.Counter(ll))
 
         return np.asarray(fl), np.asarray(ll)
 
