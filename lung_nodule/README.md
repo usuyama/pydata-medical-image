@@ -1,4 +1,6 @@
-# Lung nodule detection using 3D CNN
+# Lung nodule detection using 3D Convolutional Neural Network
+
+See the [Jupyter notebooks](./notebooks) for the scripts and explanations.
 
 ## Data
 
