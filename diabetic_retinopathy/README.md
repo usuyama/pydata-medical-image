@@ -1,6 +1,8 @@
 
 # Diabetic Retinopathy classification using 2D CNN
 
+See the [Jupyter notebooks](./notebooks) for the scripts and explanations.
+
 ## Data
 
 Download the dataset (retina images) from the Kaggle competition page.
