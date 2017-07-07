@@ -2,6 +2,8 @@
 
 This repository is for storing scripts/notebooks for "Medical image processing using Microsoft Deep Learning framework (CNTK)" (https://pydata.org/seattle2017/schedule/presentation/94/).
 
+The presentation slide is available [here](./PyData_medical_images.pdf).
+
 The talk provides 2 examples:
 - [2D-CNN: Diabetic Retinopathy Classification](./diabetic_retinopathy)
 - [3D-CNN: Lung Nodule Detection](./lung_nodule)
